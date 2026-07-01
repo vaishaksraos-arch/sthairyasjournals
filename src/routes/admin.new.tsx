@@ -7,7 +7,7 @@ import { upsertBlog } from "@/lib/blogs.functions";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/new")({
-  head: () => ({ meta: [{ title: "New article — KinetIQ" }] }),
+  head: () => ({ meta: [{ title: "New article — Sthairya's Physio Journal" }] }),
   component: NewBlog,
 });
 
