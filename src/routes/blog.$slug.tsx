@@ -9,7 +9,7 @@ import { ArrowLeft, ExternalLink, Youtube } from "lucide-react";
 export const Route = createFileRoute("/blog/$slug")({
   head: ({ params }) => ({
     meta: [
-      { title: `${params.slug.replace(/-/g, " ")} — KinetIQ` },
+      { title: `${params.slug.replace(/-/g, " ")} — Sthairya's Physio Journal` },
     ],
   }),
   component: BlogPage,
@@ -89,10 +89,10 @@ function BlogPage() {
   }
 
   const embed = blog.youtube_url ? ytEmbedUrl(blog.youtube_url) : null;
-  const searchQuery = blog.youtube_search_query || blog.title;
-  const searchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(
-    searchQuery + " physiotherapy",
-  )}`;
+  const searchQuery = (blog.youtube_search_query || blog.title) + " physiotherapy";
+  const searchEmbed = `https://www.youtube.com/embed?listType=search&list=${encodeURIComponent(searchQuery)}`;
+  const searchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(searchQuery)}`;
+  const videoSrc = embed ?? searchEmbed;
 
   return (
     <div className="min-h-screen bg-background">
@@ -109,7 +109,7 @@ function BlogPage() {
         <div className="text-[11px] uppercase tracking-[0.22em] text-clay font-medium mb-4">
           {blog.category}
         </div>
-        <h1 className="font-serif text-4xl md:text-5xl leading-[1.08] text-foreground">
+        <h1 className="font-serif text-4xl md:text-5xl leading-[1.08] text-surface">
           {blog.title}
         </h1>
         <p className="mt-5 text-lg text-muted-foreground leading-relaxed">
@@ -125,38 +125,29 @@ function BlogPage() {
           <ReactMarkdown remarkPlugins={[remarkGfm]}>{blog.content}</ReactMarkdown>
         </div>
 
-        {/* Video */}
+        {/* Video — always embedded (direct URL or YouTube search fallback) */}
         <section className="mt-12 pt-8 border-t border-border">
           <h3 className="font-serif text-xl mb-4 flex items-center gap-2">
             <Youtube className="w-5 h-5 text-clay" />
             Watch & learn
           </h3>
-          {embed ? (
-            <div className="aspect-video rounded-xl overflow-hidden border border-border">
-              <iframe
-                src={embed}
-                title={blog.title}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                className="w-full h-full"
-              />
-            </div>
-          ) : (
+          <div className="aspect-video rounded-xl overflow-hidden border border-border bg-black">
+            <iframe
+              src={videoSrc}
+              title={blog.title}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              className="w-full h-full"
+            />
+          </div>
+          {!embed && (
             <a
               href={searchUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="block rounded-xl border border-border bg-card p-6 hover:border-clay/50 transition"
+              className="mt-3 inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-clay transition"
             >
-              <div className="flex items-center justify-between gap-4">
-                <div>
-                  <div className="font-medium">Related videos on YouTube</div>
-                  <div className="text-sm text-muted-foreground mt-1">
-                    Search: <span className="italic">"{searchQuery}"</span>
-                  </div>
-                </div>
-                <ExternalLink className="w-5 h-5 text-clay shrink-0" />
-              </div>
+              More videos on YouTube <ExternalLink className="w-3 h-3" />
             </a>
           )}
         </section>
