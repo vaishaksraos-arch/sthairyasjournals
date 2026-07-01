@@ -5,9 +5,8 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * KinetIQ — physiotherapy blog design system.
- * Warm cream + sage/moss + terracotta. Editorial serif headings (Fraunces),
- * clean sans body (Inter Variable). No cold clinical blue.
+ * Sthairya's Physio Journal — palette drawn from the Sthairya Physiocare logo:
+ * deep navy, teal, sage/leaf-green on a warm cream page.
  */
 
 @theme inline {
@@ -46,72 +45,71 @@
 }
 
 :root {
-  --radius: 0.5rem;
+  --radius: 0.6rem;
 
-  /* Warm paper cream */
-  --background: oklch(0.972 0.014 85);
-  --foreground: oklch(0.22 0.02 60);
+  /* Warm cream page — matches the logo's paper background */
+  --background: oklch(0.968 0.018 82);
+  --foreground: oklch(0.24 0.04 235);
 
-  /* Elevated card = softer cream */
-  --card: oklch(0.985 0.01 85);
-  --card-foreground: oklch(0.22 0.02 60);
-  --popover: oklch(0.985 0.01 85);
-  --popover-foreground: oklch(0.22 0.02 60);
+  --card: oklch(0.985 0.012 82);
+  --card-foreground: oklch(0.24 0.04 235);
+  --popover: oklch(0.985 0.012 82);
+  --popover-foreground: oklch(0.24 0.04 235);
 
-  /* Sage / moss primary */
-  --primary: oklch(0.42 0.055 155);
-  --primary-foreground: oklch(0.98 0.012 85);
+  /* Teal — the ring / "PHYSIOCARE" wordmark */
+  --primary: oklch(0.48 0.08 200);
+  --primary-foreground: oklch(0.98 0.012 82);
 
-  --secondary: oklch(0.93 0.02 110);
-  --secondary-foreground: oklch(0.28 0.03 150);
+  --secondary: oklch(0.93 0.03 180);
+  --secondary-foreground: oklch(0.28 0.06 220);
 
-  --muted: oklch(0.94 0.015 90);
-  --muted-foreground: oklch(0.48 0.025 90);
+  --muted: oklch(0.94 0.018 90);
+  --muted-foreground: oklch(0.46 0.03 220);
 
-  /* Terracotta accent */
-  --accent: oklch(0.66 0.14 45);
-  --accent-foreground: oklch(0.98 0.01 85);
+  /* Sage / leaf green accent */
+  --accent: oklch(0.62 0.13 155);
+  --accent-foreground: oklch(0.98 0.012 82);
 
-  /* Clay — deeper terracotta for highlights */
-  --clay: oklch(0.55 0.13 40);
-  --clay-foreground: oklch(0.98 0.01 85);
+  /* Clay = leaf green (highlight color across the site) */
+  --clay: oklch(0.55 0.13 158);
+  --clay-foreground: oklch(0.98 0.012 82);
 
-  /* Surface — deep moss for hero/dark sections */
-  --surface: oklch(0.28 0.035 155);
-  --surface-foreground: oklch(0.96 0.02 90);
+  /* Deep navy — the "STHAIRYA" wordmark, used for hero/dark surfaces */
+  --surface: oklch(0.28 0.09 250);
+  --surface-foreground: oklch(0.97 0.02 90);
 
   --destructive: oklch(0.55 0.19 27);
   --destructive-foreground: oklch(0.98 0.01 85);
 
-  --border: oklch(0.88 0.018 85);
-  --input: oklch(0.9 0.015 85);
-  --ring: oklch(0.55 0.08 150);
+  --border: oklch(0.88 0.02 200);
+  --input: oklch(0.9 0.015 200);
+  --ring: oklch(0.55 0.1 200);
 }
 
 .dark {
-  --background: oklch(0.18 0.02 60);
+  --background: oklch(0.18 0.04 240);
   --foreground: oklch(0.95 0.015 85);
-  --card: oklch(0.22 0.025 65);
+  --card: oklch(0.22 0.05 240);
   --card-foreground: oklch(0.95 0.015 85);
-  --popover: oklch(0.22 0.025 65);
+  --popover: oklch(0.22 0.05 240);
   --popover-foreground: oklch(0.95 0.015 85);
-  --primary: oklch(0.72 0.09 150);
-  --primary-foreground: oklch(0.18 0.02 60);
-  --secondary: oklch(0.28 0.03 100);
+  --primary: oklch(0.72 0.1 200);
+  --primary-foreground: oklch(0.18 0.04 240);
+  --secondary: oklch(0.28 0.05 220);
   --secondary-foreground: oklch(0.95 0.015 85);
-  --muted: oklch(0.26 0.02 70);
-  --muted-foreground: oklch(0.72 0.03 85);
-  --accent: oklch(0.72 0.14 45);
-  --accent-foreground: oklch(0.18 0.02 60);
-  --clay: oklch(0.62 0.14 40);
+  --muted: oklch(0.26 0.03 230);
+  --muted-foreground: oklch(0.72 0.03 200);
+  --accent: oklch(0.72 0.13 155);
+  --accent-foreground: oklch(0.18 0.04 240);
+  --clay: oklch(0.7 0.14 158);
   --clay-foreground: oklch(0.98 0.01 85);
-  --surface: oklch(0.24 0.03 155);
-  --surface-foreground: oklch(0.95 0.02 90);
+  --surface: oklch(0.22 0.09 250);
+  --surface-foreground: oklch(0.96 0.02 90);
   --destructive: oklch(0.65 0.19 27);
   --destructive-foreground: oklch(0.98 0.01 85);
-  --border: oklch(0.32 0.025 70);
-  --input: oklch(0.3 0.02 70);
-  --ring: oklch(0.6 0.08 150);
+  --border: oklch(0.32 0.04 230);
+  --input: oklch(0.3 0.03 230);
+  --ring: oklch(0.6 0.1 200);
 }
 
 @layer base {

@@ -9,7 +9,7 @@ import { upsertBlog } from "@/lib/blogs.functions";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/$id")({
-  head: () => ({ meta: [{ title: "Edit article — KinetIQ" }] }),
+  head: () => ({ meta: [{ title: "Edit article — Sthairya's Physio Journal" }] }),
   component: EditBlog,
 });
 

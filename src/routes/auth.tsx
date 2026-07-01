@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { Activity } from "lucide-react";
 
 export const Route = createFileRoute("/auth")({
-  head: () => ({ meta: [{ title: "Sign in — KinetIQ" }] }),
+  head: () => ({ meta: [{ title: "Sign in — Sthairya's Physio Journal" }] }),
   component: AuthPage,
 });
 

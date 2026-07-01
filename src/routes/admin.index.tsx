@@ -10,7 +10,7 @@ import { toast } from "sonner";
 import { Plus, Trash2, Edit3, Sparkles, Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/admin/")({
-  head: () => ({ meta: [{ title: "Admin — KinetIQ" }] }),
+  head: () => ({ meta: [{ title: "Admin — Sthairya's Physio Journal" }] }),
   component: AdminIndex,
 });
 

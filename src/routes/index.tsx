@@ -8,8 +8,8 @@ import { Search, ArrowRight, Sparkles } from "lucide-react";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "KinetIQ — Physiotherapy Journal" },
-      { name: "description", content: "Evidence-based articles on physiotherapy conditions, treatments, and recent advances." },
+      { title: "Sthairya's Physio Journal" },
+      { name: "description", content: "Evidence-based articles on physiotherapy conditions, treatments, and recent advances from Sthairya Physiocare." },
     ],
   }),
   component: Index,
@@ -71,10 +71,10 @@ function Index() {
         <div className="max-w-6xl mx-auto px-5 md:px-8 py-14 md:py-20 relative">
           <div className="flex items-center gap-2 text-xs uppercase tracking-[0.22em] text-clay font-medium mb-5">
             <Sparkles className="w-3.5 h-3.5" />
-            Movement · Recovery · Evidence
+            Resilience · Firmness · Balance
           </div>
-          <h1 className="font-serif text-4xl md:text-6xl leading-[1.05] max-w-3xl text-foreground">
-            Physiotherapy, <em className="text-clay not-italic">translated</em> for the people who need it.
+          <h1 className="font-serif text-4xl md:text-6xl leading-[1.05] max-w-3xl text-surface">
+            Sthairya's <em className="text-clay not-italic">Physio Journal</em> — physiotherapy, made clear.
           </h1>
           <p className="mt-5 text-base md:text-lg text-muted-foreground max-w-2xl leading-relaxed">
             In-depth articles on conditions physiotherapists treat every day —
@@ -211,8 +211,8 @@ function Index() {
       </section>
 
       <footer className="border-t border-border/60 py-8 text-center text-xs text-muted-foreground">
-        KinetIQ · Educational content only. Not a substitute for individualised
-        physiotherapy assessment.
+        Sthairya's Physio Journal · Educational content only. Not a substitute
+        for individualised physiotherapy assessment.
       </footer>
     </div>
   );
