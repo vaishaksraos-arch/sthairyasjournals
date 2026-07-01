@@ -3,12 +3,12 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Header } from "@/components/Header";
 import { useMemo, useState } from "react";
-import { Search, ArrowRight, Sparkles } from "lucide-react";
+import { Search, ArrowRight, Sparkles, BookOpen, Youtube, GraduationCap } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Sthairya's Physio Journal" },
+      { title: "Sthairya's Physio Journal — Physiotherapy, made clear" },
       { name: "description", content: "Evidence-based articles on physiotherapy conditions, treatments, and recent advances from Sthairya Physiocare." },
     ],
   }),
@@ -65,21 +65,24 @@ function Index() {
     <div className="min-h-screen bg-background">
       <Header />
 
-      {/* Hero */}
-      <section className="relative overflow-hidden border-b border-border/60">
-        <div className="absolute inset-0 grain opacity-60 pointer-events-none" />
-        <div className="max-w-6xl mx-auto px-5 md:px-8 py-14 md:py-20 relative">
-          <div className="flex items-center gap-2 text-xs uppercase tracking-[0.22em] text-clay font-medium mb-5">
+      {/* Hero — logo palette */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-primary via-primary to-surface text-primary-foreground">
+        <div className="absolute inset-0 grain opacity-20" />
+        <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-accent/25 blur-3xl" />
+        <div className="absolute -bottom-40 -left-24 w-[28rem] h-[28rem] rounded-full bg-accent/15 blur-3xl" />
+        <div className="max-w-6xl mx-auto px-5 md:px-8 py-16 md:py-24 relative">
+          <div className="flex items-center gap-2 text-xs uppercase tracking-[0.24em] text-accent font-semibold mb-5">
             <Sparkles className="w-3.5 h-3.5" />
             Resilience · Firmness · Balance
           </div>
-          <h1 className="font-serif text-4xl md:text-6xl leading-[1.05] max-w-3xl text-surface">
-            Sthairya's <em className="text-clay not-italic">Physio Journal</em> — physiotherapy, made clear.
+          <h1 className="font-serif text-4xl md:text-6xl lg:text-7xl leading-[1.02] max-w-4xl">
+            Physiotherapy,{" "}
+            <span className="italic text-accent">made clear.</span>
           </h1>
-          <p className="mt-5 text-base md:text-lg text-muted-foreground max-w-2xl leading-relaxed">
-            In-depth articles on conditions physiotherapists treat every day —
-            from frozen shoulder to stroke recovery — with the exercises, videos and
-            research that make sense of them.
+          <p className="mt-6 text-base md:text-lg text-primary-foreground/80 max-w-2xl leading-relaxed">
+            In-depth articles on the conditions physiotherapists treat every day —
+            from frozen shoulder to stroke recovery — with exercises, videos and
+            research to make sense of them.
           </p>
 
           <div className="mt-8 flex flex-col sm:flex-row gap-3 max-w-xl">
@@ -88,10 +91,23 @@ function Index() {
               <input
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
-                placeholder="Search a condition, joint, treatment…"
-                className="w-full pl-10 pr-4 h-11 rounded-lg border border-border bg-card text-sm outline-none focus:border-primary/60 focus:ring-2 focus:ring-primary/15 transition"
+                placeholder="Search a condition, joint or treatment…"
+                className="w-full pl-10 pr-4 h-12 rounded-xl border border-primary-foreground/10 bg-background text-foreground text-sm outline-none focus:ring-2 focus:ring-accent/60 shadow-lg transition"
               />
             </div>
+          </div>
+
+          <div className="mt-10 grid grid-cols-3 gap-2 md:gap-6 max-w-lg text-xs md:text-sm">
+            {[
+              { icon: BookOpen, label: "Evidence-based" },
+              { icon: Youtube, label: "Video for each topic" },
+              { icon: GraduationCap, label: "Clinician-written" },
+            ].map(({ icon: Icon, label }) => (
+              <div key={label} className="flex items-center gap-2 text-primary-foreground/80">
+                <Icon className="w-4 h-4 text-accent shrink-0" />
+                <span>{label}</span>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -103,7 +119,7 @@ function Index() {
             <button
               onClick={() => setCat(null)}
               className={`shrink-0 px-3.5 py-1.5 rounded-full text-xs uppercase tracking-wider border transition ${
-                !cat ? "bg-surface text-surface-foreground border-surface" : "border-border hover:border-primary/40"
+                !cat ? "bg-primary text-primary-foreground border-primary" : "border-border hover:border-accent/60 bg-card"
               }`}
             >
               All
@@ -113,7 +129,7 @@ function Index() {
                 key={c}
                 onClick={() => setCat(c === cat ? null : c)}
                 className={`shrink-0 px-3.5 py-1.5 rounded-full text-xs uppercase tracking-wider border transition ${
-                  cat === c ? "bg-surface text-surface-foreground border-surface" : "border-border hover:border-primary/40"
+                  cat === c ? "bg-primary text-primary-foreground border-primary" : "border-border hover:border-accent/60 bg-card"
                 }`}
               >
                 {c}
@@ -129,24 +145,27 @@ function Index() {
           <Link
             to="/blog/$slug"
             params={{ slug: featured.slug }}
-            className="group block relative rounded-2xl border border-border bg-card overflow-hidden hover:border-clay/50 transition"
+            className="group block relative rounded-3xl border border-border bg-card overflow-hidden hover:border-accent/50 hover:shadow-xl hover:shadow-primary/10 transition-all"
           >
             <div className="grid md:grid-cols-[1.2fr_1fr]">
-              <div className="p-8 md:p-10">
-                <div className="text-[11px] uppercase tracking-[0.22em] text-clay mb-3">
+              <div className="p-8 md:p-12">
+                <div className="text-[11px] uppercase tracking-[0.22em] text-accent font-semibold mb-3">
                   Featured · {featured.category}
                 </div>
-                <h2 className="font-serif text-3xl md:text-4xl leading-tight text-foreground">
+                <h2 className="font-serif text-3xl md:text-4xl leading-tight text-foreground group-hover:text-primary transition">
                   {featured.title}
                 </h2>
                 <p className="mt-4 text-muted-foreground leading-relaxed">{featured.excerpt}</p>
-                <div className="mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-clay">
-                  Read article <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                <div className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-accent">
+                  Read article <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </div>
               </div>
-              <div className="bg-surface text-surface-foreground flex items-center justify-center p-10 md:p-14 relative overflow-hidden">
-                <div className="absolute inset-0 grain opacity-30" />
-                <div className="text-[8rem] md:text-[10rem] leading-none">{featured.cover_emoji ?? "🧘"}</div>
+              <div className="bg-gradient-to-br from-primary to-surface text-primary-foreground flex items-center justify-center p-10 md:p-14 relative overflow-hidden min-h-[220px]">
+                <div className="absolute inset-0 grain opacity-25" />
+                <div className="absolute -top-10 -right-10 w-48 h-48 rounded-full bg-accent/30 blur-3xl" />
+                <div className="text-[7rem] md:text-[9rem] leading-none relative drop-shadow-lg">
+                  {featured.cover_emoji ?? "🧘"}
+                </div>
               </div>
             </div>
           </Link>
@@ -156,7 +175,7 @@ function Index() {
       {/* Grid */}
       <section className="max-w-6xl mx-auto px-5 md:px-8 py-10 md:py-14">
         <div className="flex items-baseline justify-between mb-6">
-          <h2 className="font-serif text-2xl">
+          <h2 className="font-serif text-2xl md:text-3xl text-primary">
             {q || cat ? "Results" : "Latest articles"}
           </h2>
           <span className="text-xs text-muted-foreground">
@@ -167,42 +186,46 @@ function Index() {
         {isLoading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="h-56 rounded-xl border border-border bg-card animate-pulse" />
+              <div key={i} className="h-64 rounded-2xl border border-border bg-card animate-pulse" />
             ))}
           </div>
         ) : filtered.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-border p-10 text-center">
-            <p className="text-muted-foreground">
-              No articles yet.{" "}
-              <Link to="/auth" className="text-clay underline">
-                Sign in as admin
-              </Link>{" "}
-              to publish the first ones.
-            </p>
+          <div className="rounded-2xl border border-dashed border-border p-10 text-center">
+            <p className="text-muted-foreground">No articles here yet.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {(featured && !q && !cat ? filtered.slice(1) : filtered).map((b) => (
+            {(featured && !q && !cat ? filtered.slice(1) : filtered).map((b, i) => (
               <Link
                 key={b.id}
                 to="/blog/$slug"
                 params={{ slug: b.slug }}
-                className="group flex flex-col rounded-xl border border-border bg-card overflow-hidden hover:border-clay/50 hover:shadow-sm transition"
+                className="group flex flex-col rounded-2xl border border-border bg-card overflow-hidden hover:border-accent/50 hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-0.5 transition-all"
               >
-                <div className="aspect-[16/10] bg-secondary flex items-center justify-center relative overflow-hidden">
-                  <div className="absolute inset-0 grain opacity-30" />
-                  <span className="text-6xl relative">{b.cover_emoji ?? "🧘"}</span>
+                <div className={`aspect-[16/10] flex items-center justify-center relative overflow-hidden ${
+                  i % 3 === 0 ? "bg-gradient-to-br from-primary to-surface" :
+                  i % 3 === 1 ? "bg-gradient-to-br from-accent to-primary" :
+                  "bg-gradient-to-br from-surface to-accent"
+                }`}>
+                  <div className="absolute inset-0 grain opacity-25" />
+                  <div className="absolute -top-6 -right-6 w-32 h-32 rounded-full bg-primary-foreground/10 blur-2xl" />
+                  <span className="text-6xl md:text-7xl relative drop-shadow-md group-hover:scale-110 transition-transform">
+                    {b.cover_emoji ?? "🧘"}
+                  </span>
                 </div>
                 <div className="p-5 flex-1 flex flex-col">
-                  <div className="text-[10px] uppercase tracking-[0.2em] text-clay mb-2">
+                  <div className="text-[10px] uppercase tracking-[0.2em] text-accent font-semibold mb-2">
                     {b.category}
                   </div>
-                  <h3 className="font-serif text-lg leading-snug text-foreground group-hover:text-clay transition">
+                  <h3 className="font-serif text-lg leading-snug text-foreground group-hover:text-primary transition">
                     {b.title}
                   </h3>
                   <p className="mt-2 text-sm text-muted-foreground line-clamp-3 leading-relaxed flex-1">
                     {b.excerpt}
                   </p>
+                  <div className="mt-4 inline-flex items-center gap-1.5 text-xs font-semibold text-accent group-hover:gap-2 transition-all">
+                    Read <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                  </div>
                 </div>
               </Link>
             ))}
@@ -210,9 +233,11 @@ function Index() {
         )}
       </section>
 
-      <footer className="border-t border-border/60 py-8 text-center text-xs text-muted-foreground">
-        Sthairya's Physio Journal · Educational content only. Not a substitute
-        for individualised physiotherapy assessment.
+      <footer className="border-t border-border/60 py-10 text-center text-xs text-muted-foreground">
+        <div className="max-w-6xl mx-auto px-5 md:px-8">
+          <div className="font-serif text-primary text-sm mb-2">Sthairya's Physio Journal</div>
+          <p>Educational content only. Not a substitute for individualised physiotherapy assessment.</p>
+        </div>
       </footer>
     </div>
   );
