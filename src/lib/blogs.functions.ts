@@ -88,6 +88,22 @@ export const deleteBlog = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+export const setBlogPublished = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z.object({ id: z.string().uuid(), published: z.boolean() }).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    const { error } = await context.supabase
+      .from("blogs")
+      .update({ published: data.published })
+      .eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+
 // ---- AI seed generator ----
 const CATEGORIES = [
   "Musculoskeletal", "Neurological", "Sports", "Post-Surgical",

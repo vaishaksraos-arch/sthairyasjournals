@@ -2,6 +2,7 @@ import { Link, useRouter } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import logoAsset from "@/assets/sthairya-logo.jpg.asset.json";
+import { KeyRound, LogOut } from "lucide-react";
 
 export function Header() {
   const [email, setEmail] = useState<string | null>(null);
@@ -41,52 +42,64 @@ export function Header() {
   }
 
   return (
-    <header className="border-b border-border/60 bg-background/80 backdrop-blur sticky top-0 z-40">
-      <div className="max-w-6xl mx-auto px-5 md:px-8 h-16 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-3 group">
-          <img
-            src={logoAsset.url}
-            alt="Sthairya Physiocare"
-            className="w-10 h-10 rounded-full object-cover ring-1 ring-border shadow-sm"
-          />
-          <div className="leading-tight">
-            <div className="font-serif text-base md:text-lg font-semibold tracking-tight text-surface">
-              Sthairya's <span className="text-clay">Physio Journal</span>
+    <header className="border-b border-border/60 bg-background/85 backdrop-blur-md sticky top-0 z-40">
+      <div className="max-w-6xl mx-auto px-5 md:px-8 h-16 flex items-center justify-between gap-4">
+        <Link to="/" className="flex items-center gap-3 group min-w-0">
+          <div className="relative shrink-0">
+            <div className="absolute inset-0 rounded-full bg-primary/15 blur-md group-hover:bg-primary/25 transition" />
+            <img
+              src={logoAsset.url}
+              alt="Sthairya Physiocare"
+              className="relative w-11 h-11 rounded-full object-cover ring-2 ring-primary/30 shadow-md"
+            />
+          </div>
+          <div className="leading-tight min-w-0">
+            <div className="font-serif text-base md:text-lg font-semibold tracking-tight text-primary truncate">
+              Sthairya's <span className="text-accent">Physio Journal</span>
             </div>
             <div className="text-[9px] md:text-[10px] uppercase tracking-[0.22em] text-muted-foreground -mt-0.5">
               Resilience · Firmness · Balance
             </div>
           </div>
         </Link>
-        <nav className="flex items-center gap-1 md:gap-4 text-sm">
+        <nav className="flex items-center gap-1 md:gap-2 text-sm shrink-0">
           <Link
             to="/"
-            className="px-3 py-1.5 rounded-md hover:bg-muted transition"
+            className="px-3 py-1.5 rounded-md hover:bg-muted transition text-foreground/80 hover:text-foreground"
             activeOptions={{ exact: true }}
-            activeProps={{ className: "bg-muted text-foreground" }}
+            activeProps={{ className: "bg-muted text-foreground font-medium" }}
           >
             Articles
           </Link>
           {isAdmin && (
-            <Link
-              to="/admin"
-              className="px-3 py-1.5 rounded-md hover:bg-muted transition"
-              activeProps={{ className: "bg-muted text-foreground" }}
-            >
-              Admin
-            </Link>
+            <>
+              <Link
+                to="/admin"
+                className="px-3 py-1.5 rounded-md hover:bg-muted transition text-foreground/80 hover:text-foreground"
+                activeProps={{ className: "bg-muted text-foreground font-medium" }}
+              >
+                Admin
+              </Link>
+              <Link
+                to="/admin/password"
+                className="hidden md:inline-flex items-center gap-1 px-3 py-1.5 rounded-md hover:bg-muted transition text-muted-foreground hover:text-foreground text-xs"
+                title="Change password"
+              >
+                <KeyRound className="w-3.5 h-3.5" /> Password
+              </Link>
+            </>
           )}
           {email ? (
             <button
               onClick={signOut}
-              className="px-3 py-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition text-xs"
+              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition text-xs"
             >
-              Sign out
+              <LogOut className="w-3.5 h-3.5" /> Sign out
             </button>
           ) : (
             <Link
               to="/auth"
-              className="px-3 py-1.5 rounded-md bg-surface text-surface-foreground hover:opacity-90 transition"
+              className="px-3.5 py-1.5 rounded-md bg-primary text-primary-foreground hover:opacity-90 transition font-medium"
             >
               Sign in
             </Link>

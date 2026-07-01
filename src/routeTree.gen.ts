@@ -14,6 +14,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
+import { Route as AdminPasswordRouteImport } from './routes/admin.password'
 import { Route as AdminNewRouteImport } from './routes/admin.new'
 import { Route as AdminIdRouteImport } from './routes/admin.$id'
 
@@ -42,6 +43,11 @@ const BlogSlugRoute = BlogSlugRouteImport.update({
   path: '/blog/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminPasswordRoute = AdminPasswordRouteImport.update({
+  id: '/password',
+  path: '/password',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminNewRoute = AdminNewRouteImport.update({
   id: '/new',
   path: '/new',
@@ -59,6 +65,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/admin/$id': typeof AdminIdRoute
   '/admin/new': typeof AdminNewRoute
+  '/admin/password': typeof AdminPasswordRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/admin/': typeof AdminIndexRoute
 }
@@ -67,6 +74,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/admin/$id': typeof AdminIdRoute
   '/admin/new': typeof AdminNewRoute
+  '/admin/password': typeof AdminPasswordRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/admin': typeof AdminIndexRoute
 }
@@ -77,6 +85,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/admin/$id': typeof AdminIdRoute
   '/admin/new': typeof AdminNewRoute
+  '/admin/password': typeof AdminPasswordRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/admin/': typeof AdminIndexRoute
 }
@@ -88,10 +97,18 @@ export interface FileRouteTypes {
     | '/auth'
     | '/admin/$id'
     | '/admin/new'
+    | '/admin/password'
     | '/blog/$slug'
     | '/admin/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/admin/$id' | '/admin/new' | '/blog/$slug' | '/admin'
+  to:
+    | '/'
+    | '/auth'
+    | '/admin/$id'
+    | '/admin/new'
+    | '/admin/password'
+    | '/blog/$slug'
+    | '/admin'
   id:
     | '__root__'
     | '/'
@@ -99,6 +116,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/admin/$id'
     | '/admin/new'
+    | '/admin/password'
     | '/blog/$slug'
     | '/admin/'
   fileRoutesById: FileRoutesById
@@ -147,6 +165,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/password': {
+      id: '/admin/password'
+      path: '/password'
+      fullPath: '/admin/password'
+      preLoaderRoute: typeof AdminPasswordRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/new': {
       id: '/admin/new'
       path: '/new'
@@ -167,12 +192,14 @@ declare module '@tanstack/react-router' {
 interface AdminRouteChildren {
   AdminIdRoute: typeof AdminIdRoute
   AdminNewRoute: typeof AdminNewRoute
+  AdminPasswordRoute: typeof AdminPasswordRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminIdRoute: AdminIdRoute,
   AdminNewRoute: AdminNewRoute,
+  AdminPasswordRoute: AdminPasswordRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
 
