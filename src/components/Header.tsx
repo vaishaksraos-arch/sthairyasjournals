@@ -42,24 +42,16 @@ export function Header() {
   }
 
   return (
-    <header className="border-b border-border/60 bg-background/85 backdrop-blur-md sticky top-0 z-40">
+    <header className="border-b border-border/60 bg-background/90 backdrop-blur-md sticky top-0 z-40">
       <div className="max-w-6xl mx-auto px-5 md:px-8 h-16 flex items-center justify-between gap-4">
         <Link to="/" className="flex items-center gap-3 group min-w-0">
-          <div className="relative shrink-0">
-            <div className="absolute inset-0 rounded-full bg-primary/15 blur-md group-hover:bg-primary/25 transition" />
-            <img
-              src={logoAsset.url}
-              alt="Sthairya Physiocare"
-              className="relative w-11 h-11 rounded-full object-cover ring-2 ring-primary/30 shadow-md"
-            />
-          </div>
-          <div className="leading-tight min-w-0">
-            <div className="font-serif text-base md:text-lg font-semibold tracking-tight text-primary truncate">
-              Sthairya's <span className="text-accent">Physio Journal</span>
-            </div>
-            <div className="text-[9px] md:text-[10px] uppercase tracking-[0.22em] text-muted-foreground -mt-0.5">
-              Resilience · Firmness · Balance
-            </div>
+          <img
+            src={logoAsset.url}
+            alt="Sthairya Physiocare"
+            className="w-10 h-10 rounded-full object-cover ring-2 ring-primary/30 shadow-sm shrink-0"
+          />
+          <div className="font-serif text-lg md:text-xl font-semibold tracking-tight text-foreground truncate">
+            Sthairya's <span className="text-primary">Physio Journal</span>
           </div>
         </Link>
         <nav className="flex items-center gap-1 md:gap-2 text-sm shrink-0">
@@ -87,19 +79,19 @@ export function Header() {
               >
                 <KeyRound className="w-3.5 h-3.5" /> Password
               </Link>
+              <button
+                onClick={signOut}
+                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition text-xs"
+              >
+                <LogOut className="w-3.5 h-3.5" /> Sign out
+              </button>
             </>
           )}
-          {email ? (
-            <button
-              onClick={signOut}
-              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition text-xs"
-            >
-              <LogOut className="w-3.5 h-3.5" /> Sign out
-            </button>
-          ) : (
+          {!email && (
             <Link
               to="/auth"
-              className="px-3.5 py-1.5 rounded-md bg-primary text-primary-foreground hover:opacity-90 transition font-medium"
+              className="text-xs text-muted-foreground hover:text-foreground transition px-2 py-1"
+              title="Admin sign in"
             >
               Sign in
             </Link>

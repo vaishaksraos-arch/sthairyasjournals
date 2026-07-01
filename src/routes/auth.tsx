@@ -21,6 +21,7 @@ function toEmail(usernameOrEmail: string) {
 }
 
 function AuthPage() {
+  const BOOTSTRAP_PASSWORD = "admin12345";
   const [username, setUsername] = useState("admin");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -37,7 +38,7 @@ function AuthPage() {
         // The DB trigger promotes the first ever user to admin automatically.
         if (
           email === ADMIN_EMAIL &&
-          password === "password" &&
+          password === BOOTSTRAP_PASSWORD &&
           /invalid|not found|credentials/i.test(error.message)
         ) {
           const { error: upErr } = await supabase.auth.signUp({
