@@ -14,6 +14,7 @@ import "@fontsource/fraunces/400.css";
 import "@fontsource/fraunces/500.css";
 import "@fontsource/fraunces/600.css";
 import "@fontsource/fraunces/700.css";
+// @ts-expect-error - side-effect font import has no types
 import "@fontsource-variable/inter";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "sonner";
