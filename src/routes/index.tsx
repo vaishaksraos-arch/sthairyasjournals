@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Header } from "@/components/Header";
 import { useMemo, useState } from "react";
-import { Search, ArrowRight, Sparkles, BookOpen, Youtube, GraduationCap } from "lucide-react";
+import { Search, ArrowRight, BookOpen, Youtube, GraduationCap, HeartPulse, Activity, Brain } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -71,18 +71,16 @@ function Index() {
         <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-accent/25 blur-3xl" />
         <div className="absolute -bottom-40 -left-24 w-[28rem] h-[28rem] rounded-full bg-accent/15 blur-3xl" />
         <div className="max-w-6xl mx-auto px-5 md:px-8 py-16 md:py-24 relative">
-          <div className="flex items-center gap-2 text-xs uppercase tracking-[0.24em] text-accent font-semibold mb-5">
-            <Sparkles className="w-3.5 h-3.5" />
-            Resilience · Firmness · Balance
-          </div>
           <h1 className="font-serif text-4xl md:text-6xl lg:text-7xl leading-[1.02] max-w-4xl">
             Physiotherapy,{" "}
             <span className="italic text-accent">made clear.</span>
           </h1>
-          <p className="mt-6 text-base md:text-lg text-primary-foreground/80 max-w-2xl leading-relaxed">
-            In-depth articles on the conditions physiotherapists treat every day —
-            from frozen shoulder to stroke recovery — with exercises, videos and
-            research to make sense of them.
+          <p className="mt-6 text-base md:text-lg text-primary-foreground/85 max-w-2xl leading-relaxed">
+            Physiotherapy is the science of restoring movement — helping people
+            recover from injury, manage pain, rebuild strength after surgery or
+            stroke, and stay active for life. Explore in-depth guides on the
+            conditions physiotherapists treat every day, with exercises, videos
+            and research to make sense of them.
           </p>
 
           <div className="mt-8 flex flex-col sm:flex-row gap-3 max-w-xl">
@@ -103,12 +101,43 @@ function Index() {
               { icon: Youtube, label: "Video for each topic" },
               { icon: GraduationCap, label: "Clinician-written" },
             ].map(({ icon: Icon, label }) => (
-              <div key={label} className="flex items-center gap-2 text-primary-foreground/80">
+              <div key={label} className="flex items-center gap-2 text-primary-foreground/85">
                 <Icon className="w-4 h-4 text-accent shrink-0" />
                 <span>{label}</span>
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Intro to physiotherapy */}
+      <section className="max-w-6xl mx-auto px-5 md:px-8 pt-12 md:pt-16">
+        <div className="grid md:grid-cols-3 gap-5">
+          {[
+            {
+              icon: HeartPulse,
+              title: "What physiotherapy treats",
+              body: "Musculoskeletal pain, sports injuries, post-surgical recovery, arthritis, neurological conditions, respiratory illness, and age-related mobility loss.",
+            },
+            {
+              icon: Activity,
+              title: "How treatment works",
+              body: "A physiotherapist assesses movement, strength, and pain, then combines manual therapy, targeted exercise, education, and modalities like ultrasound or dry needling.",
+            },
+            {
+              icon: Brain,
+              title: "Why it matters",
+              body: "Physiotherapy restores independence, prevents surgery in many cases, and delivers lasting relief by treating the cause of dysfunction — not just the symptom.",
+            },
+          ].map(({ icon: Icon, title, body }) => (
+            <div key={title} className="rounded-2xl border border-border bg-card p-6 hover:border-accent/40 transition">
+              <div className="w-10 h-10 rounded-lg bg-primary/10 text-primary grid place-items-center mb-3">
+                <Icon className="w-5 h-5" />
+              </div>
+              <h3 className="font-serif text-lg text-foreground mb-1.5">{title}</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">{body}</p>
+            </div>
+          ))}
         </div>
       </section>
 
