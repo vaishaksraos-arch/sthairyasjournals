@@ -1,7 +1,7 @@
 import { Link, useRouter } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Activity } from "lucide-react";
+import logoAsset from "@/assets/sthairya-logo.jpg.asset.json";
 
 export function Header() {
   const [email, setEmail] = useState<string | null>(null);
@@ -43,14 +43,18 @@ export function Header() {
   return (
     <header className="border-b border-border/60 bg-background/80 backdrop-blur sticky top-0 z-40">
       <div className="max-w-6xl mx-auto px-5 md:px-8 h-16 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2.5 group">
-          <div className="w-8 h-8 rounded-lg bg-surface text-surface-foreground grid place-items-center">
-            <Activity className="w-4 h-4" />
-          </div>
+        <Link to="/" className="flex items-center gap-3 group">
+          <img
+            src={logoAsset.url}
+            alt="Sthairya Physiocare"
+            className="w-10 h-10 rounded-full object-cover ring-1 ring-border shadow-sm"
+          />
           <div className="leading-tight">
-            <div className="font-serif text-lg font-semibold tracking-tight">KinetIQ</div>
-            <div className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground -mt-0.5">
-              physio journal
+            <div className="font-serif text-base md:text-lg font-semibold tracking-tight text-surface">
+              Sthairya's <span className="text-clay">Physio Journal</span>
+            </div>
+            <div className="text-[9px] md:text-[10px] uppercase tracking-[0.22em] text-muted-foreground -mt-0.5">
+              Resilience · Firmness · Balance
             </div>
           </div>
         </Link>
