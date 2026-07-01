@@ -54,7 +54,7 @@ function EditBlog() {
             youtube_url: blog.youtube_url ?? "",
             youtube_search_query: blog.youtube_search_query ?? "",
             cover_emoji: blog.cover_emoji ?? "🧘",
-            references: blog.references_json ?? [],
+            references: Array.isArray(blog.references_json) ? (blog.references_json as string[]) : [],
             published: blog.published,
           }}
           onSubmit={async (values) => {
