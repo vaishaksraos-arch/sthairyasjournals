@@ -3,7 +3,7 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Header } from "@/components/Header";
 import { toast } from "sonner";
-import { Activity, Info } from "lucide-react";
+import { Activity } from "lucide-react";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({ meta: [{ title: "Sign in — Sthairya's Physio Journal" }] }),
@@ -21,6 +21,7 @@ function toEmail(usernameOrEmail: string) {
 }
 
 function AuthPage() {
+  const BOOTSTRAP_PASSWORD = "admin12345";
   const [username, setUsername] = useState("admin");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -37,7 +38,7 @@ function AuthPage() {
         // The DB trigger promotes the first ever user to admin automatically.
         if (
           email === ADMIN_EMAIL &&
-          password === "password" &&
+          password === BOOTSTRAP_PASSWORD &&
           /invalid|not found|credentials/i.test(error.message)
         ) {
           const { error: upErr } = await supabase.auth.signUp({
@@ -108,13 +109,6 @@ function AuthPage() {
           >
             {loading ? "Signing in…" : "Sign in"}
           </button>
-          <div className="flex items-start gap-2 rounded-lg bg-muted/60 border border-border p-3 text-xs text-muted-foreground">
-            <Info className="w-4 h-4 mt-0.5 text-accent shrink-0" />
-            <div>
-              First-time login: <b className="text-foreground">admin</b> /{" "}
-              <b className="text-foreground">password</b>. You'll be able to change your password after signing in.
-            </div>
-          </div>
         </form>
       </div>
     </div>
