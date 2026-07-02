@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Header } from "@/components/Header";
 import { useMemo, useState } from "react";
-import { Search, ArrowRight, BookOpen, Youtube, GraduationCap, HeartPulse, Activity, Brain } from "lucide-react";
+import { Search, ArrowRight, BookOpen, Lightbulb, GraduationCap, HeartPulse, Activity, Brain } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -22,10 +22,13 @@ type Blog = {
   category: string;
   excerpt: string;
   cover_emoji: string | null;
+  cover_image_url: string | null;
   created_at: string;
+  author_id: string | null;
 };
 
 function Index() {
+  const [qDraft, setQDraft] = useState("");
   const [q, setQ] = useState("");
   const [cat, setCat] = useState<string | null>(null);
 
@@ -34,8 +37,9 @@ function Index() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("blogs")
-        .select("id,slug,title,category,excerpt,cover_emoji,created_at")
+        .select("id,slug,title,category,excerpt,cover_emoji,cover_image_url,created_at,author_id")
         .eq("published", true)
+        .not("author_id", "is", null)
         .order("created_at", { ascending: false });
       if (error) throw error;
       return data as Blog[];
@@ -53,19 +57,24 @@ function Index() {
       if (cat && b.category !== cat) return false;
       if (q) {
         const s = q.toLowerCase();
-        return b.title.toLowerCase().includes(s) || b.excerpt.toLowerCase().includes(s);
+        return b.title.toLowerCase().includes(s) || b.excerpt.toLowerCase().includes(s) || b.category.toLowerCase().includes(s);
       }
       return true;
     });
   }, [blogs, q, cat]);
 
-  const featured = blogs?.[0];
+  const featured = !q && !cat ? blogs?.[0] : undefined;
+
+  function runSearch(e?: React.FormEvent) {
+    e?.preventDefault();
+    setQ(qDraft.trim());
+  }
 
   return (
     <div className="min-h-screen bg-background">
       <Header />
 
-      {/* Hero — logo palette */}
+      {/* Hero */}
       <section className="relative overflow-hidden bg-gradient-to-br from-primary via-primary to-surface text-primary-foreground">
         <div className="absolute inset-0 grain opacity-20" />
         <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-accent/25 blur-3xl" />
@@ -83,22 +92,10 @@ function Index() {
             and research to make sense of them.
           </p>
 
-          <div className="mt-8 flex flex-col sm:flex-row gap-3 max-w-xl">
-            <div className="relative flex-1">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <input
-                value={q}
-                onChange={(e) => setQ(e.target.value)}
-                placeholder="Search a condition, joint or treatment…"
-                className="w-full pl-10 pr-4 h-12 rounded-xl border border-primary-foreground/10 bg-background text-foreground text-sm outline-none focus:ring-2 focus:ring-accent/60 shadow-lg transition"
-              />
-            </div>
-          </div>
-
           <div className="mt-10 grid grid-cols-3 gap-2 md:gap-6 max-w-lg text-xs md:text-sm">
             {[
               { icon: BookOpen, label: "Evidence-based" },
-              { icon: Youtube, label: "Video for each topic" },
+              { icon: Lightbulb, label: "Actionable tips" },
               { icon: GraduationCap, label: "Clinician-written" },
             ].map(({ icon: Icon, label }) => (
               <div key={label} className="flex items-center gap-2 text-primary-foreground/85">
@@ -110,25 +107,13 @@ function Index() {
         </div>
       </section>
 
-      {/* Intro to physiotherapy */}
+      {/* Intro pillars */}
       <section className="max-w-6xl mx-auto px-5 md:px-8 pt-12 md:pt-16">
         <div className="grid md:grid-cols-3 gap-5">
           {[
-            {
-              icon: HeartPulse,
-              title: "What physiotherapy treats",
-              body: "Musculoskeletal pain, sports injuries, post-surgical recovery, arthritis, neurological conditions, respiratory illness, and age-related mobility loss.",
-            },
-            {
-              icon: Activity,
-              title: "How treatment works",
-              body: "A physiotherapist assesses movement, strength, and pain, then combines manual therapy, targeted exercise, education, and modalities like ultrasound or dry needling.",
-            },
-            {
-              icon: Brain,
-              title: "Why it matters",
-              body: "Physiotherapy restores independence, prevents surgery in many cases, and delivers lasting relief by treating the cause of dysfunction — not just the symptom.",
-            },
+            { icon: HeartPulse, title: "What physiotherapy treats", body: "Musculoskeletal pain, sports injuries, post-surgical recovery, arthritis, neurological conditions, respiratory illness, and age-related mobility loss." },
+            { icon: Activity, title: "How treatment works", body: "A physiotherapist assesses movement, strength, and pain, then combines manual therapy, targeted exercise, education, and modalities like ultrasound or dry needling." },
+            { icon: Brain, title: "Why it matters", body: "Physiotherapy restores independence, prevents surgery in many cases, and delivers lasting relief by treating the cause of dysfunction — not just the symptom." },
           ].map(({ icon: Icon, title, body }) => (
             <div key={title} className="rounded-2xl border border-border bg-card p-6 hover:border-accent/40 transition">
               <div className="w-10 h-10 rounded-lg bg-primary/10 text-primary grid place-items-center mb-3">
@@ -141,9 +126,40 @@ function Index() {
         </div>
       </section>
 
+      {/* Search bar (below why-it-matters, above filter chips) */}
+      <section className="max-w-3xl mx-auto px-5 md:px-8 pt-10">
+        <form onSubmit={runSearch} className="flex gap-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <input
+              type="text"
+              value={qDraft}
+              onChange={(e) => setQDraft(e.target.value)}
+              placeholder="Search a condition, joint or treatment…"
+              className="w-full pl-10 pr-4 h-12 rounded-xl border border-border bg-card text-foreground text-sm outline-none focus:ring-2 focus:ring-primary/40 shadow-sm transition"
+            />
+          </div>
+          <button
+            type="submit"
+            className="h-12 px-5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold shadow-sm hover:opacity-90 transition inline-flex items-center gap-1.5"
+          >
+            <Search className="w-4 h-4" /> Find
+          </button>
+          {q && (
+            <button
+              type="button"
+              onClick={() => { setQ(""); setQDraft(""); }}
+              className="h-12 px-3 rounded-xl border border-border text-xs text-muted-foreground hover:bg-muted transition"
+            >
+              Clear
+            </button>
+          )}
+        </form>
+      </section>
+
       {/* Category chips */}
       {categories.length > 0 && (
-        <div className="max-w-6xl mx-auto px-5 md:px-8 pt-8">
+        <div className="max-w-6xl mx-auto px-5 md:px-8 pt-6">
           <div className="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1">
             <button
               onClick={() => setCat(null)}
@@ -169,7 +185,7 @@ function Index() {
       )}
 
       {/* Featured */}
-      {!q && !cat && featured && (
+      {featured && (
         <section className="max-w-6xl mx-auto px-5 md:px-8 pt-8">
           <Link
             to="/blog/$slug"
@@ -192,9 +208,13 @@ function Index() {
               <div className="bg-gradient-to-br from-primary to-surface text-primary-foreground flex items-center justify-center p-10 md:p-14 relative overflow-hidden min-h-[220px]">
                 <div className="absolute inset-0 grain opacity-25" />
                 <div className="absolute -top-10 -right-10 w-48 h-48 rounded-full bg-accent/30 blur-3xl" />
-                <div className="text-[7rem] md:text-[9rem] leading-none relative drop-shadow-lg">
-                  {featured.cover_emoji ?? "🧘"}
-                </div>
+                {featured.cover_image_url ? (
+                  <img src={featured.cover_image_url} alt="" className="w-full h-full object-cover absolute inset-0" />
+                ) : (
+                  <div className="text-[7rem] md:text-[9rem] leading-none relative drop-shadow-lg">
+                    {featured.cover_emoji ?? "🧘"}
+                  </div>
+                )}
               </div>
             </div>
           </Link>
@@ -224,7 +244,7 @@ function Index() {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {(featured && !q && !cat ? filtered.slice(1) : filtered).map((b, i) => (
+            {(featured ? filtered.slice(1) : filtered).map((b, i) => (
               <Link
                 key={b.id}
                 to="/blog/$slug"
@@ -236,11 +256,17 @@ function Index() {
                   i % 3 === 1 ? "bg-gradient-to-br from-accent to-primary" :
                   "bg-gradient-to-br from-surface to-accent"
                 }`}>
-                  <div className="absolute inset-0 grain opacity-25" />
-                  <div className="absolute -top-6 -right-6 w-32 h-32 rounded-full bg-primary-foreground/10 blur-2xl" />
-                  <span className="text-6xl md:text-7xl relative drop-shadow-md group-hover:scale-110 transition-transform">
-                    {b.cover_emoji ?? "🧘"}
-                  </span>
+                  {b.cover_image_url ? (
+                    <img src={b.cover_image_url} alt="" className="w-full h-full object-cover" />
+                  ) : (
+                    <>
+                      <div className="absolute inset-0 grain opacity-25" />
+                      <div className="absolute -top-6 -right-6 w-32 h-32 rounded-full bg-primary-foreground/10 blur-2xl" />
+                      <span className="text-6xl md:text-7xl relative drop-shadow-md group-hover:scale-110 transition-transform">
+                        {b.cover_emoji ?? "🧘"}
+                      </span>
+                    </>
+                  )}
                 </div>
                 <div className="p-5 flex-1 flex flex-col">
                   <div className="text-[10px] uppercase tracking-[0.2em] text-accent font-semibold mb-2">
@@ -264,7 +290,7 @@ function Index() {
 
       <footer className="border-t border-border/60 py-10 text-center text-xs text-muted-foreground">
         <div className="max-w-6xl mx-auto px-5 md:px-8">
-          <div className="font-serif text-primary text-sm mb-2">Sthairya's Physio Journal</div>
+          <div className="font-serif logo-gradient-text text-sm mb-2 font-bold">Sthairya's Physio Journal</div>
           <p>Educational content only. Not a substitute for individualised physiotherapy assessment.</p>
         </div>
       </footer>
