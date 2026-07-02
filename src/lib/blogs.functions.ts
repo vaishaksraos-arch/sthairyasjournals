@@ -79,7 +79,7 @@ export const upsertBlog = createServerFn({ method: "POST" })
       }
     }
 
-    const payload: Record<string, unknown> = {
+    const payload = {
       title: data.title,
       slug: data.slug?.trim() ? slugify(data.slug) : slugify(data.title),
       category: data.category,
