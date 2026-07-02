@@ -1,40 +1,23 @@
-import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+// Back-compat wrapper. Prefer useRole() directly.
+import { useEffect } from "react";
 import { useNavigate } from "@tanstack/react-router";
+import { useRole } from "./use-role";
 
 type Status = "loading" | "unauth" | "not-admin" | "admin";
 
-export function useAdminGate(): { status: Status; userId: string | null } {
-  const [status, setStatus] = useState<Status>("loading");
-  const [userId, setUserId] = useState<string | null>(null);
+export function useAdminGate(opts?: { allowEditor?: boolean }): { status: Status; userId: string | null; isEditor: boolean } {
+  const { status, role, userId, isAdmin, isEditor } = useRole();
   const navigate = useNavigate();
-
   useEffect(() => {
-    let mounted = true;
-    async function run() {
-      const { data: session } = await supabase.auth.getSession();
-      if (!mounted) return;
-      if (!session.session) {
-        setStatus("unauth");
-        navigate({ to: "/auth" });
-        return;
-      }
-      const uid = session.session.user.id;
-      setUserId(uid);
-      const { data } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", uid)
-        .eq("role", "admin")
-        .maybeSingle();
-      if (!mounted) return;
-      setStatus(data ? "admin" : "not-admin");
-    }
-    run();
-    return () => {
-      mounted = false;
-    };
-  }, [navigate]);
+    if (status === "unauth") navigate({ to: "/auth" });
+  }, [status, navigate]);
 
-  return { status, userId };
+  const allowed = isAdmin || (opts?.allowEditor && isEditor);
+  const outStatus: Status =
+    status === "loading" ? "loading" :
+    status === "unauth" ? "unauth" :
+    allowed ? "admin" : "not-admin";
+  return { status: outStatus, userId, isEditor };
 }
+
+export { useRole };

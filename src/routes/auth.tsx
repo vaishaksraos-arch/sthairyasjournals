@@ -10,7 +10,6 @@ export const Route = createFileRoute("/auth")({
   component: AuthPage,
 });
 
-// Map friendly "admin" username to a real email under a reserved local domain.
 const ADMIN_EMAIL = "admin@sthairya.local";
 
 function toEmail(usernameOrEmail: string) {
@@ -22,7 +21,7 @@ function toEmail(usernameOrEmail: string) {
 
 function AuthPage() {
   const BOOTSTRAP_PASSWORD = "admin12345";
-  const [username, setUsername] = useState("admin");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -34,8 +33,6 @@ function AuthPage() {
     try {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) {
-        // If the admin account hasn't been created yet, bootstrap it now.
-        // The DB trigger promotes the first ever user to admin automatically.
         if (
           email === ADMIN_EMAIL &&
           password === BOOTSTRAP_PASSWORD &&
@@ -74,19 +71,18 @@ function AuthPage() {
             <Activity className="w-6 h-6" />
           </div>
           <h1 className="font-serif text-3xl text-primary">Sign in</h1>
-          <p className="text-sm text-muted-foreground mt-2">
-            Admin access to publish and manage articles.
-          </p>
         </div>
 
-        <form onSubmit={submit} className="space-y-4 rounded-2xl border border-border bg-card p-6 shadow-sm">
+        <form onSubmit={submit} className="space-y-4 rounded-2xl border border-border bg-card p-6 shadow-sm" autoComplete="off">
           <div>
             <label className="text-xs uppercase tracking-wider text-muted-foreground">Username</label>
             <input
               required
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              autoComplete="username"
+              autoComplete="off"
+              name="sthairya-user"
+              spellCheck={false}
               className="mt-1.5 w-full h-11 px-3 rounded-lg border border-border bg-background outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition"
             />
           </div>
@@ -98,7 +94,8 @@ function AuthPage() {
               minLength={6}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              autoComplete="current-password"
+              autoComplete="new-password"
+              name="sthairya-pw"
               className="mt-1.5 w-full h-11 px-3 rounded-lg border border-border bg-background outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition"
             />
           </div>

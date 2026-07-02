@@ -18,6 +18,7 @@ import "@fontsource/fraunces/700.css";
 import "@fontsource-variable/inter";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "sonner";
+import { FloatingActions } from "@/components/FloatingActions";
 
 function NotFoundComponent() {
   return (
@@ -79,8 +80,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary" },
       { name: "twitter:title", content: "Sthairya's Physio Journal" },
       { name: "twitter:description", content: "Evidence-based physiotherapy articles on conditions, treatments, and recent advances — from Sthairya Physiocare." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/fb90579d-212c-4a87-a9f0-3dbcb0b4978e/id-preview-7b08fd87--4b7fce2e-4729-417e-bafe-cbbbca58a870.lovable.app-1782880378872.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/fb90579d-212c-4a87-a9f0-3dbcb0b4978e/id-preview-7b08fd87--4b7fce2e-4729-417e-bafe-cbbbca58a870.lovable.app-1782880378872.png" },
     ],
     links: [{ rel: "stylesheet", href: appCss }],
   }),
@@ -107,6 +106,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <Outlet />
+      <FloatingActions />
       <Toaster position="top-center" richColors />
     </QueryClientProvider>
   );
