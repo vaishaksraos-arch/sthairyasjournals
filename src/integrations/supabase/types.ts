@@ -17,14 +17,22 @@ export type Database = {
       blogs: {
         Row: {
           author_id: string | null
+          author_name: string | null
+          author_photo_url: string | null
+          author_qualification: string | null
+          body_part: string | null
           category: string
           content: string
           cover_emoji: string | null
+          cover_image_url: string | null
           created_at: string
           excerpt: string
           id: string
           published: boolean
           references_json: Json
+          show_assessment: boolean
+          show_exercises: boolean
+          show_treatment: boolean
           slug: string
           title: string
           updated_at: string
@@ -33,14 +41,22 @@ export type Database = {
         }
         Insert: {
           author_id?: string | null
+          author_name?: string | null
+          author_photo_url?: string | null
+          author_qualification?: string | null
+          body_part?: string | null
           category: string
           content: string
           cover_emoji?: string | null
+          cover_image_url?: string | null
           created_at?: string
           excerpt: string
           id?: string
           published?: boolean
           references_json?: Json
+          show_assessment?: boolean
+          show_exercises?: boolean
+          show_treatment?: boolean
           slug: string
           title: string
           updated_at?: string
@@ -49,14 +65,22 @@ export type Database = {
         }
         Update: {
           author_id?: string | null
+          author_name?: string | null
+          author_photo_url?: string | null
+          author_qualification?: string | null
+          body_part?: string | null
           category?: string
           content?: string
           cover_emoji?: string | null
+          cover_image_url?: string | null
           created_at?: string
           excerpt?: string
           id?: string
           published?: boolean
           references_json?: Json
+          show_assessment?: boolean
+          show_exercises?: boolean
+          show_treatment?: boolean
           slug?: string
           title?: string
           updated_at?: string
@@ -69,17 +93,53 @@ export type Database = {
         Row: {
           created_at: string
           display_name: string | null
+          full_name: string | null
           id: string
+          photo_url: string | null
+          qualification: string | null
+          username: string | null
         }
         Insert: {
           created_at?: string
           display_name?: string | null
+          full_name?: string | null
           id: string
+          photo_url?: string | null
+          qualification?: string | null
+          username?: string | null
         }
         Update: {
           created_at?: string
           display_name?: string | null
+          full_name?: string | null
           id?: string
+          photo_url?: string | null
+          qualification?: string | null
+          username?: string | null
+        }
+        Relationships: []
+      }
+      site_settings: {
+        Row: {
+          fab_redirect_url: string | null
+          global_redirect_url: string | null
+          id: number
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          fab_redirect_url?: string | null
+          global_redirect_url?: string | null
+          id?: number
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          fab_redirect_url?: string | null
+          global_redirect_url?: string | null
+          id?: number
+          updated_at?: string
+          updated_by?: string | null
         }
         Relationships: []
       }
