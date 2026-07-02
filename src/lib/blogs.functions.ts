@@ -79,7 +79,15 @@ export const upsertBlog = createServerFn({ method: "POST" })
       }
     }
 
-    const payload = {
+    const payload: {
+      title: string; slug: string; category: string; body_part: string | null;
+      excerpt: string; content: string; youtube_url: string | null; youtube_search_query: string | null;
+      cover_emoji: string; cover_image_url: string | null;
+      author_name: string | null; author_qualification: string | null; author_photo_url: string | null;
+      references_json: string[]; published: boolean;
+      show_assessment: boolean; show_treatment: boolean; show_exercises: boolean;
+      author_id?: string;
+    } = {
       title: data.title,
       slug: data.slug?.trim() ? slugify(data.slug) : slugify(data.title),
       category: data.category,
