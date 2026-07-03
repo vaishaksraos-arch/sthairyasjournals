@@ -3,11 +3,12 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { Header } from "@/components/Header";
+import { BackButton } from "@/components/BackButton";
 import { useAdminGate } from "@/hooks/use-admin-gate";
-import { provisionUser, resetUserPassword } from "@/lib/blogs.functions";
-import { useState } from "react";
+import { provisionUser, resetUserPassword, updateUserAccount } from "@/lib/blogs.functions";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { UserPlus, KeyRound, Users as UsersIcon } from "lucide-react";
+import { UserPlus, KeyRound, Users as UsersIcon, Pencil } from "lucide-react";
 
 export const Route = createFileRoute("/admin/users")({
   head: () => ({ meta: [{ title: "Users — Sthairya's Physio Journal" }] }),
@@ -15,12 +16,14 @@ export const Route = createFileRoute("/admin/users")({
 });
 
 type ProfileRow = { id: string; full_name: string | null; display_name: string | null; username: string | null; qualification: string | null; };
+type UserRow = ProfileRow & { roles: string[] };
 
 function UsersPage() {
   const { status } = useAdminGate();
   const qc = useQueryClient();
   const provision = useServerFn(provisionUser);
   const reset = useServerFn(resetUserPassword);
+  const updateAcct = useServerFn(updateUserAccount);
 
   const [fullName, setFullName] = useState("");
   const [username, setUsername] = useState("");
@@ -33,6 +36,8 @@ function UsersPage() {
   const [resetUid, setResetUid] = useState<string | null>(null);
   const [newPw, setNewPw] = useState("");
   const [resetting, setResetting] = useState(false);
+
+  const [editUser, setEditUser] = useState<UserRow | null>(null);
 
   const { data: users, refetch } = useQuery({
     queryKey: ["admin-users"],
@@ -47,7 +52,7 @@ function UsersPage() {
         arr.push(r.role);
         roleMap.set(r.user_id, arr);
       });
-      return (profs as ProfileRow[]).map((p) => ({ ...p, roles: roleMap.get(p.id) ?? [] }));
+      return (profs as ProfileRow[]).map((p) => ({ ...p, roles: roleMap.get(p.id) ?? [] })) as UserRow[];
     },
   });
 
@@ -86,6 +91,9 @@ function UsersPage() {
     <div className="min-h-screen bg-background">
       <Header />
       <div className="max-w-4xl mx-auto px-5 md:px-8 py-10 space-y-8">
+        <div className="flex items-center justify-between gap-3">
+          <BackButton fallback="/admin" label="Back" />
+        </div>
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary grid place-items-center"><UsersIcon className="w-5 h-5" /></div>
           <h1 className="font-serif text-3xl text-primary">Users</h1>
@@ -117,7 +125,7 @@ function UsersPage() {
           <h2 className="font-serif text-xl mb-4">All users</h2>
           <div className="divide-y divide-border">
             {(users ?? []).map((u) => (
-              <div key={u.id} className="py-3 flex items-center gap-3">
+              <div key={u.id} className="py-3 flex flex-wrap items-center gap-2">
                 <div className="flex-1 min-w-0">
                   <div className="font-medium truncate">{u.full_name || u.display_name || u.username || u.id.slice(0, 8)}</div>
                   <div className="text-xs text-muted-foreground truncate">
@@ -125,6 +133,9 @@ function UsersPage() {
                     {u.qualification || "—"} · <span className="text-accent">{u.roles.join(", ") || "user"}</span>
                   </div>
                 </div>
+                <button onClick={() => setEditUser(u)} className="inline-flex items-center gap-1 h-9 px-3 rounded-md border border-border hover:bg-muted text-xs">
+                  <Pencil className="w-3.5 h-3.5" /> Edit
+                </button>
                 <button onClick={() => { setResetUid(u.id); setNewPw(""); }} className="inline-flex items-center gap-1 h-9 px-3 rounded-md border border-border hover:bg-muted text-xs">
                   <KeyRound className="w-3.5 h-3.5" /> Reset password
                 </button>
@@ -146,6 +157,15 @@ function UsersPage() {
             </form>
           </div>
         )}
+
+        {editUser && (
+          <EditUserPanel
+            user={editUser}
+            onClose={() => setEditUser(null)}
+            onSaved={() => { setEditUser(null); qc.invalidateQueries({ queryKey: ["admin-users"] }); refetch(); }}
+            update={updateAcct}
+          />
+        )}
       </div>
     </div>
   );
@@ -154,4 +174,67 @@ function UsersPage() {
 const ip = "w-full h-10 px-3 rounded-lg border border-border bg-background outline-none focus:ring-2 focus:ring-primary/20 text-sm";
 function F({ label, children }: { label: string; children: React.ReactNode }) {
   return <label className="block"><div className="text-xs uppercase tracking-wider text-muted-foreground mb-1.5">{label}</div>{children}</label>;
+}
+
+function EditUserPanel({
+  user, onClose, onSaved, update,
+}: {
+  user: UserRow;
+  onClose: () => void;
+  onSaved: () => void;
+  update: (opts: { data: { user_id: string; full_name: string; username: string; email: string; password?: string; qualification?: string } }) => Promise<unknown>;
+}) {
+  const [fullName, setFullName] = useState(user.full_name || user.display_name || "");
+  const [uname, setUname] = useState(user.username || "");
+  const [email, setEmail] = useState("");
+  const [qual, setQual] = useState(user.qualification || "");
+  const [pw, setPw] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      const { data } = await supabase.auth.getUser();
+      // fallback: we can't read arbitrary emails from client; leave blank if unknown
+      if (data.user?.id === user.id && data.user.email) setEmail(data.user.email);
+    })();
+  }, [user.id]);
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!email) return toast.error("Email is required");
+    if (pw && pw.length < 8) return toast.error("Password must be at least 8 characters");
+    setSaving(true);
+    try {
+      await update({ data: { user_id: user.id, full_name: fullName, username: uname, email, password: pw || undefined, qualification: qual } });
+      toast.success("User updated");
+      onSaved();
+    } catch (err) { toast.error((err as Error).message); }
+    finally { setSaving(false); }
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 bg-black/40 grid place-items-center p-4" onClick={onClose}>
+      <form onSubmit={submit} onClick={(e) => e.stopPropagation()} className="w-full max-w-lg rounded-2xl bg-card border border-border p-6 shadow-xl space-y-4" autoComplete="off">
+        <div className="flex items-center gap-2">
+          <Pencil className="w-4 h-4 text-accent" />
+          <h3 className="font-serif text-lg">Edit user</h3>
+        </div>
+        <div className="grid sm:grid-cols-2 gap-3">
+          <F label="Full name"><input required value={fullName} onChange={(e) => setFullName(e.target.value)} className={ip} /></F>
+          <F label="Username"><input required value={uname} onChange={(e) => setUname(e.target.value)} className={ip} /></F>
+          <F label="Email ID"><input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className={ip} /></F>
+          <F label="Qualification"><input value={qual} onChange={(e) => setQual(e.target.value)} className={ip} /></F>
+          <div className="sm:col-span-2">
+            <F label="New password (leave blank to keep current)">
+              <input type="password" value={pw} onChange={(e) => setPw(e.target.value)} autoComplete="new-password" placeholder="Min 8 chars" className={ip} />
+            </F>
+          </div>
+        </div>
+        <div className="flex justify-end gap-2 pt-2 border-t border-border">
+          <button type="button" onClick={onClose} className="h-10 px-4 rounded-lg border border-border hover:bg-muted text-sm">Cancel</button>
+          <button type="submit" disabled={saving} className="h-10 px-4 rounded-lg bg-primary text-primary-foreground text-sm font-medium disabled:opacity-50">{saving ? "Saving…" : "Save changes"}</button>
+        </div>
+      </form>
+    </div>
+  );
 }
