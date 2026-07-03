@@ -29,6 +29,11 @@ async function assertAdminOrEditor(context: { supabase: any; userId: string }) {
 }
 
 const UrlOptional = z.string().url().optional().or(z.literal(""));
+const ImageOptional = z
+  .string()
+  .refine((s) => !s || /^(https?:\/\/|data:image\/)/i.test(s), "Invalid image URL")
+  .optional()
+  .or(z.literal(""));
 
 const BlogInput = z.object({
   id: z.string().uuid().optional(),
