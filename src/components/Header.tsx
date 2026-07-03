@@ -2,7 +2,7 @@ import { Link, useRouter } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import logoAsset from "@/assets/sthairya-logo.jpg.asset.json";
-import { KeyRound, LogOut, Home, Users, Settings } from "lucide-react";
+import { KeyRound, LogOut, Home, Users, Settings, PenTool } from "lucide-react";
 
 export function Header() {
   const [email, setEmail] = useState<string | null>(null);
