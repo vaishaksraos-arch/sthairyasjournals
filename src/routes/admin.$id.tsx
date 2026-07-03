@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { BlogForm } from "@/components/BlogForm";
 import { Header } from "@/components/Header";
+import { BackButton } from "@/components/BackButton";
 import { useAdminGate } from "@/hooks/use-admin-gate";
 import { useServerFn } from "@tanstack/react-start";
 import { upsertBlog } from "@/lib/blogs.functions";
@@ -50,6 +51,9 @@ function EditBlog() {
     <div className="min-h-screen bg-background">
       <Header />
       <div className="max-w-3xl mx-auto px-5 md:px-8 py-10">
+        <div className="flex items-center justify-between gap-3 mb-6">
+          <BackButton fallback="/admin" label="Back to articles" />
+        </div>
         <h1 className="font-serif text-3xl mb-6">Edit article</h1>
         <BlogForm
           isAdmin={isAdmin}

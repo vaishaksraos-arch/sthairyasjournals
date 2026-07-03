@@ -3,10 +3,10 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Header } from "@/components/Header";
 import { toast } from "sonner";
-import { Activity } from "lucide-react";
+import { PenTool } from "lucide-react";
 
 export const Route = createFileRoute("/auth")({
-  head: () => ({ meta: [{ title: "Sign in — Sthairya's Physio Journal" }] }),
+  head: () => ({ meta: [{ title: "Author Dashboard — Sthairya's Physio Journal" }] }),
   component: AuthPage,
 });
 
@@ -14,6 +14,7 @@ const ADMIN_EMAIL = "admin@sthairya.local";
 
 function toEmail(usernameOrEmail: string) {
   const v = usernameOrEmail.trim().toLowerCase();
+  if (!v) return v;
   if (v === "admin") return ADMIN_EMAIL;
   if (v.includes("@")) return v;
   return `${v}@sthairya.local`;
@@ -28,6 +29,10 @@ function AuthPage() {
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+    if (!username.trim() || !password) {
+      toast.error("Enter a username and password");
+      return;
+    }
     setLoading(true);
     const email = toEmail(username);
     try {
@@ -68,21 +73,25 @@ function AuthPage() {
       <div className="max-w-md mx-auto px-5 py-16">
         <div className="text-center mb-8">
           <div className="w-14 h-14 rounded-2xl bg-primary text-primary-foreground grid place-items-center mx-auto mb-4 shadow-lg shadow-primary/20">
-            <Activity className="w-6 h-6" />
+            <PenTool className="w-6 h-6" />
           </div>
-          <h1 className="font-serif text-3xl text-primary">Sign in</h1>
+          <h1 className="font-serif text-3xl text-primary">Author Dashboard</h1>
         </div>
 
         <form onSubmit={submit} className="space-y-4 rounded-2xl border border-border bg-card p-6 shadow-sm" autoComplete="off">
           <div>
             <label className="text-xs uppercase tracking-wider text-muted-foreground">Username</label>
             <input
+              type="text"
               required
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               autoComplete="off"
+              autoCorrect="off"
+              autoCapitalize="off"
               name="sthairya-user"
               spellCheck={false}
+              placeholder=""
               className="mt-1.5 w-full h-11 px-3 rounded-lg border border-border bg-background outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition"
             />
           </div>
@@ -91,7 +100,6 @@ function AuthPage() {
             <input
               type="password"
               required
-              minLength={6}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               autoComplete="new-password"

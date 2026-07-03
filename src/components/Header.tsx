@@ -2,7 +2,7 @@ import { Link, useRouter } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import logoAsset from "@/assets/sthairya-logo.jpg.asset.json";
-import { KeyRound, LogOut, Home, Users, Settings } from "lucide-react";
+import { KeyRound, LogOut, Home, Users, Settings, PenTool } from "lucide-react";
 
 export function Header() {
   const [email, setEmail] = useState<string | null>(null);
@@ -117,10 +117,11 @@ export function Header() {
           {!email && (
             <Link
               to="/auth"
-              className="text-xs text-muted-foreground hover:text-foreground transition px-2 py-1"
-              title="Sign in"
+              className="inline-flex items-center justify-center w-9 h-9 rounded-full text-muted-foreground hover:text-primary hover:bg-muted transition shrink-0"
+              title="Author Dashboard"
+              aria-label="Author Dashboard"
             >
-              Sign in
+              <PenTool className="w-4 h-4" />
             </Link>
           )}
         </nav>

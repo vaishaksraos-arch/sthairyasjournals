@@ -29,6 +29,11 @@ async function assertAdminOrEditor(context: { supabase: any; userId: string }) {
 }
 
 const UrlOptional = z.string().url().optional().or(z.literal(""));
+const ImageOptional = z
+  .string()
+  .refine((s) => !s || /^(https?:\/\/|data:image\/)/i.test(s), "Invalid image URL")
+  .optional()
+  .or(z.literal(""));
 
 const BlogInput = z.object({
   id: z.string().uuid().optional(),
@@ -41,16 +46,16 @@ const BlogInput = z.object({
   youtube_url: UrlOptional,
   youtube_search_query: z.string().max(300).optional().or(z.literal("")),
   cover_emoji: z.string().max(8).optional().or(z.literal("")),
-  cover_image_url: UrlOptional,
+  cover_image_url: ImageOptional,
   author_name: z.string().max(120).optional().or(z.literal("")),
   author_qualification: z.string().max(200).optional().or(z.literal("")),
-  author_photo_url: UrlOptional,
+  author_photo_url: ImageOptional,
   author_id_override: z.string().uuid().optional(),
   references: z.array(z.string().url()).max(30).default([]),
   published: z.boolean().default(true),
-  show_assessment: z.boolean().default(true),
-  show_treatment: z.boolean().default(true),
-  show_exercises: z.boolean().default(true),
+  show_assessment: z.boolean().default(false),
+  show_treatment: z.boolean().default(false),
+  show_exercises: z.boolean().default(false),
 });
 
 export const upsertBlog = createServerFn({ method: "POST" })
@@ -228,6 +233,39 @@ export const resetUserPassword = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { error } = await supabaseAdmin.auth.admin.updateUserById(data.user_id, { password: data.password });
     if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const updateUserAccount = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z.object({
+      user_id: z.string().uuid(),
+      full_name: z.string().min(2).max(120),
+      username: z.string().min(3).max(60).regex(/^[a-zA-Z0-9._-]+$/),
+      email: z.string().email(),
+      password: z.string().min(8).max(128).optional().or(z.literal("")),
+      qualification: z.string().max(200).optional().default(""),
+    }).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const updates: { email: string; password?: string; user_metadata: Record<string, string> } = {
+      email: data.email,
+      user_metadata: { display_name: data.full_name, username: data.username },
+    };
+    if (data.password) updates.password = data.password;
+    const { error } = await supabaseAdmin.auth.admin.updateUserById(data.user_id, updates);
+    if (error) throw new Error(error.message);
+    const { error: pErr } = await supabaseAdmin.from("profiles").upsert({
+      id: data.user_id,
+      full_name: data.full_name,
+      display_name: data.full_name,
+      username: data.username,
+      qualification: data.qualification || null,
+    });
+    if (pErr) throw new Error(pErr.message);
     return { ok: true };
   });
 

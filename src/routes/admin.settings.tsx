@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { Header } from "@/components/Header";
+import { BackButton } from "@/components/BackButton";
 import { useAdminGate } from "@/hooks/use-admin-gate";
 import { updateSiteSettings } from "@/lib/blogs.functions";
 import { useEffect, useState } from "react";
@@ -64,6 +65,7 @@ function SettingsPage() {
     <div className="min-h-screen bg-background">
       <Header />
       <div className="max-w-2xl mx-auto px-5 md:px-8 py-10">
+        <div className="mb-6"><BackButton fallback="/admin" label="Back" /></div>
         <div className="flex items-center gap-3 mb-6">
           <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary grid place-items-center"><Settings className="w-5 h-5" /></div>
           <h1 className="font-serif text-3xl text-primary">Global Link Configuration</h1>

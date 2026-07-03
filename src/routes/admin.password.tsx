@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Header } from "@/components/Header";
+import { BackButton } from "@/components/BackButton";
 import { useAdminGate } from "@/hooks/use-admin-gate";
 import { toast } from "sonner";
 import { KeyRound } from "lucide-react";
@@ -48,6 +49,7 @@ function ChangePassword() {
     <div className="min-h-screen bg-background">
       <Header />
       <div className="max-w-md mx-auto px-5 py-16">
+        <div className="mb-6"><BackButton fallback="/admin" label="Back" /></div>
         <div className="text-center mb-8">
           <div className="w-14 h-14 rounded-2xl bg-primary text-primary-foreground grid place-items-center mx-auto mb-4 shadow-lg shadow-primary/20">
             <KeyRound className="w-6 h-6" />

@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { BlogForm } from "@/components/BlogForm";
 import { Header } from "@/components/Header";
+import { BackButton } from "@/components/BackButton";
 import { useAdminGate } from "@/hooks/use-admin-gate";
 import { useServerFn } from "@tanstack/react-start";
 import { upsertBlog } from "@/lib/blogs.functions";
@@ -24,6 +25,7 @@ function NewBlog() {
     <div className="min-h-screen bg-background">
       <Header />
       <div className="max-w-3xl mx-auto px-5 md:px-8 py-10">
+        <div className="mb-6"><BackButton fallback="/admin" label="Back to articles" /></div>
         <h1 className="font-serif text-3xl mb-6">New article</h1>
         <BlogForm
           isAdmin={!isEditor}
