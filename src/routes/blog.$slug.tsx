@@ -205,20 +205,22 @@ function BlogPage() {
           })}
         </div>
 
-        <section className="mt-12 pt-8 border-t border-border">
-          <h3 className="font-serif text-2xl mb-4 flex items-center gap-2 text-primary">
-            <Youtube className="w-6 h-6 text-destructive" /> Watch & learn
-          </h3>
-          <div className="aspect-video rounded-2xl overflow-hidden border border-border bg-black shadow-lg">
-            <iframe src={videoSrc} title={blog.title}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen className="w-full h-full" />
-          </div>
-          <a href={searchUrl} target="_blank" rel="noopener noreferrer"
-             className="mt-3 inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-accent transition">
-            More related videos on YouTube <ExternalLink className="w-3 h-3" />
-          </a>
-        </section>
+        {hasVideo && (
+          <section className="mt-12 pt-8 border-t border-border">
+            <h3 className="font-serif text-2xl mb-4 flex items-center gap-2 text-primary">
+              <Youtube className="w-6 h-6 text-destructive" /> Watch & learn
+            </h3>
+            <div className="aspect-video rounded-2xl overflow-hidden border border-border bg-black shadow-lg">
+              <iframe src={embed!} title={blog.title}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen className="w-full h-full" />
+            </div>
+            <a href={searchUrl} target="_blank" rel="noopener noreferrer"
+               className="mt-3 inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-accent transition">
+              More related videos on YouTube <ExternalLink className="w-3 h-3" />
+            </a>
+          </section>
+        )}
 
         {blog.references_json && blog.references_json.length > 0 && (
           <section className="mt-10 pt-8 border-t border-border">
