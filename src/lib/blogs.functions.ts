@@ -53,9 +53,9 @@ const BlogInput = z.object({
   author_id_override: z.string().uuid().optional(),
   references: z.array(z.string().url()).max(30).default([]),
   published: z.boolean().default(true),
-  show_assessment: z.boolean().default(true),
-  show_treatment: z.boolean().default(true),
-  show_exercises: z.boolean().default(true),
+  show_assessment: z.boolean().default(false),
+  show_treatment: z.boolean().default(false),
+  show_exercises: z.boolean().default(false),
 });
 
 export const upsertBlog = createServerFn({ method: "POST" })
