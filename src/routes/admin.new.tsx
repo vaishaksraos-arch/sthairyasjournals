@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { BlogForm } from "@/components/BlogForm";
 import { Header } from "@/components/Header";
+import { BackButton } from "@/components/BackButton";
 import { useAdminGate } from "@/hooks/use-admin-gate";
 import { useServerFn } from "@tanstack/react-start";
 import { upsertBlog } from "@/lib/blogs.functions";
