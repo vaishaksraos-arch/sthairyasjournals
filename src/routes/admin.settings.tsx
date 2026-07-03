@@ -65,6 +65,7 @@ function SettingsPage() {
     <div className="min-h-screen bg-background">
       <Header />
       <div className="max-w-2xl mx-auto px-5 md:px-8 py-10">
+        <div className="mb-6"><BackButton fallback="/admin" label="Back" /></div>
         <div className="flex items-center gap-3 mb-6">
           <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary grid place-items-center"><Settings className="w-5 h-5" /></div>
           <h1 className="font-serif text-3xl text-primary">Global Link Configuration</h1>
