@@ -127,11 +127,11 @@ function BlogPage() {
     );
   }
 
-  const embed = blog.youtube_url ? ytEmbedUrl(blog.youtube_url) : null;
-  const searchQuery = (blog.youtube_search_query || blog.title) + " physiotherapy";
-  const searchEmbed = `https://www.youtube.com/embed?listType=search&list=${encodeURIComponent(searchQuery)}`;
+  const rawYt = (blog.youtube_url ?? "").trim();
+  const embed = rawYt ? ytEmbedUrl(rawYt) : null;
+  const hasVideo = !!embed;
+  const searchQuery = ((blog.youtube_search_query || blog.title) + " physiotherapy").trim();
   const searchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(searchQuery)}`;
-  const videoSrc = embed ?? searchEmbed;
   const mins = readingTime(blog.content);
   const date = new Date(blog.created_at).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
 
