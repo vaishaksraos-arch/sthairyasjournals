@@ -236,6 +236,39 @@ export const resetUserPassword = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+export const updateUserAccount = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z.object({
+      user_id: z.string().uuid(),
+      full_name: z.string().min(2).max(120),
+      username: z.string().min(3).max(60).regex(/^[a-zA-Z0-9._-]+$/),
+      email: z.string().email(),
+      password: z.string().min(8).max(128).optional().or(z.literal("")),
+      qualification: z.string().max(200).optional().default(""),
+    }).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const updates: { email: string; password?: string; user_metadata: Record<string, string> } = {
+      email: data.email,
+      user_metadata: { display_name: data.full_name, username: data.username },
+    };
+    if (data.password) updates.password = data.password;
+    const { error } = await supabaseAdmin.auth.admin.updateUserById(data.user_id, updates);
+    if (error) throw new Error(error.message);
+    const { error: pErr } = await supabaseAdmin.from("profiles").upsert({
+      id: data.user_id,
+      full_name: data.full_name,
+      display_name: data.full_name,
+      username: data.username,
+      qualification: data.qualification || null,
+    });
+    if (pErr) throw new Error(pErr.message);
+    return { ok: true };
+  });
+
 // ---- AI seed generator (unchanged) ----
 const CATEGORIES = [
   "Musculoskeletal", "Neurological", "Sports", "Post-Surgical",
