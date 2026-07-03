@@ -108,7 +108,7 @@ export function BlogForm({
     }
     setUploadingPhoto(true);
     try {
-      const url = await uploadToBucket(file, "authors");
+      const url = await readAsDataUrl(file);
       up("author_photo_url", url);
       toast.success("Author photo uploaded");
     } catch (err) {
