@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Header } from "@/components/Header";
+import { BackButton } from "@/components/BackButton";
 import { useAdminGate } from "@/hooks/use-admin-gate";
 import { toast } from "sonner";
 import { KeyRound } from "lucide-react";
