@@ -1,5 +1,4 @@
 import { useState, useRef } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Upload, X, User } from "lucide-react";
 
@@ -33,20 +32,20 @@ const DEFAULTS: BlogFormValues = {
   cover_emoji: "🧘", cover_image_url: "",
   author_name: "", author_qualification: "", author_photo_url: "",
   references: [], published: true,
-  show_assessment: true, show_treatment: true, show_exercises: true,
+  show_assessment: false, show_treatment: false, show_exercises: false,
 };
 
 const CATEGORIES = ["Musculoskeletal","Neurological","Sports","Post-Surgical","Pediatric","Geriatric","Cardiopulmonary","Women's Health","Manual Therapy","Exercise & Rehab"];
 const BODY_PARTS = ["","Shoulder","Elbow","Wrist/Hand","Neck","Upper Back","Lower Back","Hip","Knee","Ankle/Foot","Head/Face","Chest","Pelvis","Full Body"];
 
-async function uploadToBucket(file: File, folder: string): Promise<string> {
+async function readAsDataUrl(file: File): Promise<string> {
   if (file.size > 2 * 1024 * 1024) throw new Error("File size exceeds 2 MB limit");
-  const ext = file.name.split(".").pop() || "jpg";
-  const path = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
-  const { error } = await supabase.storage.from("article-media").upload(path, file, { upsert: false, contentType: file.type });
-  if (error) throw error;
-  const { data } = supabase.storage.from("article-media").getPublicUrl(path);
-  return data.publicUrl;
+  return await new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(String(r.result));
+    r.onerror = () => reject(new Error("Failed to read file"));
+    r.readAsDataURL(file);
+  });
 }
 
 export function BlogForm({
