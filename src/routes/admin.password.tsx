@@ -49,6 +49,7 @@ function ChangePassword() {
     <div className="min-h-screen bg-background">
       <Header />
       <div className="max-w-md mx-auto px-5 py-16">
+        <div className="mb-6"><BackButton fallback="/admin" label="Back" /></div>
         <div className="text-center mb-8">
           <div className="w-14 h-14 rounded-2xl bg-primary text-primary-foreground grid place-items-center mx-auto mb-4 shadow-lg shadow-primary/20">
             <KeyRound className="w-6 h-6" />
