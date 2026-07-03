@@ -87,7 +87,7 @@ export function BlogForm({
     }
     setUploadingCover(true);
     try {
-      const url = await uploadToBucket(file, "covers");
+      const url = await readAsDataUrl(file);
       up("cover_image_url", url);
       toast.success("Cover uploaded");
     } catch (err) {
