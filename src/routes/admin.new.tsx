@@ -25,6 +25,7 @@ function NewBlog() {
     <div className="min-h-screen bg-background">
       <Header />
       <div className="max-w-3xl mx-auto px-5 md:px-8 py-10">
+        <div className="mb-6"><BackButton fallback="/admin" label="Back to articles" /></div>
         <h1 className="font-serif text-3xl mb-6">New article</h1>
         <BlogForm
           isAdmin={!isEditor}
