@@ -39,7 +39,6 @@ function Index() {
         .from("blogs")
         .select("id,slug,title,category,excerpt,cover_emoji,cover_image_url,created_at,author_id")
         .eq("published", true)
-        .not("author_id", "is", null)
         .order("created_at", { ascending: false });
       if (error) throw error;
       return data as Blog[];
