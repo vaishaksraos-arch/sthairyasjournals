@@ -268,10 +268,20 @@ export function BlogForm({
       </label>
 
       <div className="flex justify-end gap-2 pt-4 border-t border-border">
-        <button type="submit" disabled={saving} className="h-10 px-5 rounded-lg bg-primary text-primary-foreground font-medium hover:opacity-90 disabled:opacity-50">
+        <button type="submit" disabled={saving} className="h-10 px-5 rounded-lg bg-gradient-to-r from-primary to-accent text-primary-foreground font-medium hover:opacity-95 hover:shadow-lg hover:shadow-primary/20 disabled:opacity-50 transition-all active:scale-[0.99]">
           {saving ? "Saving…" : v.id ? "Save changes" : "Publish"}
         </button>
       </div>
+
+      {cropSrc && cropTarget && (
+        <ImageCropperModal
+          src={cropSrc}
+          aspect={1}
+          circular={cropTarget === "photo"}
+          onCancel={() => { setCropSrc(null); setCropTarget(null); }}
+          onCropped={handleCropped}
+        />
+      )}
     </form>
   );
 }
