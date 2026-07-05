@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import { toast } from "sonner";
 import { Upload, X, User } from "lucide-react";
+import { ImageCropperModal } from "@/components/ImageCropperModal";
 
 export type BlogFormValues = {
   id?: string;
@@ -48,6 +49,8 @@ async function readAsDataUrl(file: File): Promise<string> {
   });
 }
 
+type CropTarget = "cover" | "photo";
+
 export function BlogForm({
   initial,
   onSubmit,
@@ -66,6 +69,8 @@ export function BlogForm({
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const coverFileRef = useRef<HTMLInputElement>(null);
   const photoFileRef = useRef<HTMLInputElement>(null);
+  const [cropSrc, setCropSrc] = useState<string | null>(null);
+  const [cropTarget, setCropTarget] = useState<CropTarget | null>(null);
 
   function up<K extends keyof BlogFormValues>(k: K, val: BlogFormValues[K]) {
     setV((s) => ({ ...s, [k]: val }));
@@ -77,46 +82,38 @@ export function BlogForm({
     try { await onSubmit(v); } finally { setSaving(false); }
   }
 
-  async function onCoverFile(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    if (file.size > 2 * 1024 * 1024) {
-      toast.error("File size exceeds 2 MB limit");
-      if (coverFileRef.current) coverFileRef.current.value = "";
-      return;
-    }
-    setUploadingCover(true);
+  async function beginCrop(file: File, target: CropTarget, resetRef: React.RefObject<HTMLInputElement | null>) {
     try {
       const url = await readAsDataUrl(file);
-      up("cover_image_url", url);
-      toast.success("Cover uploaded");
+      setCropSrc(url);
+      setCropTarget(target);
     } catch (err) {
       toast.error((err as Error).message);
     } finally {
-      setUploadingCover(false);
-      if (coverFileRef.current) coverFileRef.current.value = "";
+      if (resetRef.current) resetRef.current.value = "";
     }
+  }
+
+  async function onCoverFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingCover(true);
+    try { await beginCrop(file, "cover", coverFileRef); }
+    finally { setUploadingCover(false); }
   }
 
   async function onPhotoFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (file.size > 2 * 1024 * 1024) {
-      toast.error("File size exceeds 2 MB limit");
-      if (photoFileRef.current) photoFileRef.current.value = "";
-      return;
-    }
     setUploadingPhoto(true);
-    try {
-      const url = await readAsDataUrl(file);
-      up("author_photo_url", url);
-      toast.success("Author photo uploaded");
-    } catch (err) {
-      toast.error((err as Error).message);
-    } finally {
-      setUploadingPhoto(false);
-      if (photoFileRef.current) photoFileRef.current.value = "";
-    }
+    try { await beginCrop(file, "photo", photoFileRef); }
+    finally { setUploadingPhoto(false); }
+  }
+
+  function handleCropped(url: string) {
+    if (cropTarget === "cover") { up("cover_image_url", url); toast.success("Cover updated"); }
+    else if (cropTarget === "photo") { up("author_photo_url", url); toast.success("Author photo updated"); }
+    setCropSrc(null); setCropTarget(null);
   }
 
   function addRef() {
@@ -271,10 +268,20 @@ export function BlogForm({
       </label>
 
       <div className="flex justify-end gap-2 pt-4 border-t border-border">
-        <button type="submit" disabled={saving} className="h-10 px-5 rounded-lg bg-primary text-primary-foreground font-medium hover:opacity-90 disabled:opacity-50">
+        <button type="submit" disabled={saving} className="h-10 px-5 rounded-lg bg-gradient-to-r from-primary to-accent text-primary-foreground font-medium hover:opacity-95 hover:shadow-lg hover:shadow-primary/20 disabled:opacity-50 transition-all active:scale-[0.99]">
           {saving ? "Saving…" : v.id ? "Save changes" : "Publish"}
         </button>
       </div>
+
+      {cropSrc && cropTarget && (
+        <ImageCropperModal
+          src={cropSrc}
+          aspect={1}
+          circular={cropTarget === "photo"}
+          onCancel={() => { setCropSrc(null); setCropTarget(null); }}
+          onCropped={handleCropped}
+        />
+      )}
     </form>
   );
 }

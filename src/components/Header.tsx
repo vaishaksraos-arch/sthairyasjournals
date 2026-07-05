@@ -37,7 +37,8 @@ export function Header() {
 
   async function signOut() {
     await supabase.auth.signOut();
-    router.navigate({ to: "/" });
+    try { sessionStorage.clear(); } catch { /* ignore */ }
+    router.navigate({ to: "/", replace: true });
   }
 
   function goHome(e: React.MouseEvent) {

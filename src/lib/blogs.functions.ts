@@ -269,6 +269,20 @@ export const updateUserAccount = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+export const deleteUserAccount = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => z.object({ user_id: z.string().uuid() }).parse(input))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    if (data.user_id === context.userId) throw new Error("You cannot delete your own account");
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    await supabaseAdmin.from("user_roles").delete().eq("user_id", data.user_id);
+    await supabaseAdmin.from("profiles").delete().eq("id", data.user_id);
+    const { error } = await supabaseAdmin.auth.admin.deleteUser(data.user_id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
 // ---- AI seed generator (unchanged) ----
 const CATEGORIES = [
   "Musculoskeletal", "Neurological", "Sports", "Post-Surgical",
