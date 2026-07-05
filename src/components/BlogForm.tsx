@@ -49,6 +49,8 @@ async function readAsDataUrl(file: File): Promise<string> {
   });
 }
 
+type CropTarget = "cover" | "photo";
+
 export function BlogForm({
   initial,
   onSubmit,
