@@ -112,11 +112,33 @@ export function BlogForm({
     finally { setUploadingPhoto(false); }
   }
 
-  function handleCropped(url: string) {
-    if (cropTarget === "cover") { up("cover_image_url", url); toast.success("Cover updated"); }
-    else if (cropTarget === "photo") { up("author_photo_url", url); toast.success("Author photo updated"); }
+  async function handleCropped(dataUrl: string) {
+    const target = cropTarget;
     setCropSrc(null); setCropTarget(null);
+    if (!target) return;
+    const setBusy = target === "cover" ? setUploadingCover : setUploadingPhoto;
+    setBusy(true);
+    try {
+      // Convert data URL → Blob and upload to Supabase Storage for durable persistence
+      const blob = await (await fetch(dataUrl)).blob();
+      const ext = (blob.type.split("/")[1] || "jpg").split("+")[0];
+      const folder = target === "cover" ? "covers" : "authors";
+      const path = `${folder}/${crypto.randomUUID()}.${ext}`;
+      const { error: upErr } = await supabase.storage
+        .from("article-media")
+        .upload(path, blob, { contentType: blob.type, upsert: false, cacheControl: "31536000" });
+      if (upErr) throw upErr;
+      const { data: pub } = supabase.storage.from("article-media").getPublicUrl(path);
+      const url = pub.publicUrl;
+      if (target === "cover") { up("cover_image_url", url); toast.success("Cover uploaded"); }
+      else { up("author_photo_url", url); toast.success("Author photo uploaded"); }
+    } catch (err) {
+      toast.error("Upload failed: " + (err as Error).message);
+    } finally {
+      setBusy(false);
+    }
   }
+
 
   function addRef() {
     const url = refInput.trim();
