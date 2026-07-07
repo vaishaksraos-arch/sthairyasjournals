@@ -2,6 +2,8 @@ import { useState, useRef } from "react";
 import { toast } from "sonner";
 import { Upload, X, User } from "lucide-react";
 import { ImageCropperModal } from "@/components/ImageCropperModal";
+import { supabase } from "@/integrations/supabase/client";
+
 
 export type BlogFormValues = {
   id?: string;
