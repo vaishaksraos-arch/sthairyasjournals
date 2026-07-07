@@ -2,6 +2,8 @@ import { useState, useRef } from "react";
 import { toast } from "sonner";
 import { Upload, X, User } from "lucide-react";
 import { ImageCropperModal } from "@/components/ImageCropperModal";
+import { supabase } from "@/integrations/supabase/client";
+
 
 export type BlogFormValues = {
   id?: string;
@@ -40,7 +42,7 @@ const CATEGORIES = ["Musculoskeletal","Neurological","Sports","Post-Surgical","P
 const BODY_PARTS = ["","Shoulder","Elbow","Wrist/Hand","Neck","Upper Back","Lower Back","Hip","Knee","Ankle/Foot","Head/Face","Chest","Pelvis","Full Body"];
 
 async function readAsDataUrl(file: File): Promise<string> {
-  if (file.size > 2 * 1024 * 1024) throw new Error("File size exceeds 2 MB limit");
+  if (file.size > 10 * 1024 * 1024) throw new Error("File size exceeds 10 MB limit");
   return await new Promise((resolve, reject) => {
     const r = new FileReader();
     r.onload = () => resolve(String(r.result));
@@ -48,6 +50,7 @@ async function readAsDataUrl(file: File): Promise<string> {
     r.readAsDataURL(file);
   });
 }
+
 
 type CropTarget = "cover" | "photo";
 
@@ -110,11 +113,33 @@ export function BlogForm({
     finally { setUploadingPhoto(false); }
   }
 
-  function handleCropped(url: string) {
-    if (cropTarget === "cover") { up("cover_image_url", url); toast.success("Cover updated"); }
-    else if (cropTarget === "photo") { up("author_photo_url", url); toast.success("Author photo updated"); }
+  async function handleCropped(dataUrl: string) {
+    const target = cropTarget;
     setCropSrc(null); setCropTarget(null);
+    if (!target) return;
+    const setBusy = target === "cover" ? setUploadingCover : setUploadingPhoto;
+    setBusy(true);
+    try {
+      // Convert data URL → Blob and upload to Supabase Storage for durable persistence
+      const blob = await (await fetch(dataUrl)).blob();
+      const ext = (blob.type.split("/")[1] || "jpg").split("+")[0];
+      const folder = target === "cover" ? "covers" : "authors";
+      const path = `${folder}/${crypto.randomUUID()}.${ext}`;
+      const { error: upErr } = await supabase.storage
+        .from("article-media")
+        .upload(path, blob, { contentType: blob.type, upsert: false, cacheControl: "31536000" });
+      if (upErr) throw upErr;
+      const { data: pub } = supabase.storage.from("article-media").getPublicUrl(path);
+      const url = pub.publicUrl;
+      if (target === "cover") { up("cover_image_url", url); toast.success("Cover uploaded"); }
+      else { up("author_photo_url", url); toast.success("Author photo uploaded"); }
+    } catch (err) {
+      toast.error("Upload failed: " + (err as Error).message);
+    } finally {
+      setBusy(false);
+    }
   }
+
 
   function addRef() {
     const url = refInput.trim();
@@ -152,7 +177,7 @@ export function BlogForm({
                   <X className="w-3 h-3" /> Remove
                 </button>
               )}
-              <span className="text-xs text-muted-foreground">Max 2 MB. Image overrides emoji.</span>
+              <span className="text-xs text-muted-foreground">Max 10 MB. Image overrides emoji.</span>
             </div>
           </div>
         </div>
@@ -229,7 +254,7 @@ export function BlogForm({
               {v.author_photo_url && (
                 <button type="button" onClick={() => up("author_photo_url", "")} className="text-xs text-destructive hover:underline">Remove</button>
               )}
-              <span className="text-xs text-muted-foreground">Max 2 MB.</span>
+              <span className="text-xs text-muted-foreground">Max 10 MB.</span>
             </div>
             {isAdmin && users.length > 0 && (
               <Field label="Assign article to user (admin)">
