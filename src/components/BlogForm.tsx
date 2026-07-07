@@ -42,7 +42,7 @@ const CATEGORIES = ["Musculoskeletal","Neurological","Sports","Post-Surgical","P
 const BODY_PARTS = ["","Shoulder","Elbow","Wrist/Hand","Neck","Upper Back","Lower Back","Hip","Knee","Ankle/Foot","Head/Face","Chest","Pelvis","Full Body"];
 
 async function readAsDataUrl(file: File): Promise<string> {
-  if (file.size > 2 * 1024 * 1024) throw new Error("File size exceeds 2 MB limit");
+  if (file.size > 10 * 1024 * 1024) throw new Error("File size exceeds 10 MB limit");
   return await new Promise((resolve, reject) => {
     const r = new FileReader();
     r.onload = () => resolve(String(r.result));
@@ -50,6 +50,7 @@ async function readAsDataUrl(file: File): Promise<string> {
     r.readAsDataURL(file);
   });
 }
+
 
 type CropTarget = "cover" | "photo";
 
