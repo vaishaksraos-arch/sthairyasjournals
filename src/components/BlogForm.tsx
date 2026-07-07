@@ -177,7 +177,7 @@ export function BlogForm({
                   <X className="w-3 h-3" /> Remove
                 </button>
               )}
-              <span className="text-xs text-muted-foreground">Max 2 MB. Image overrides emoji.</span>
+              <span className="text-xs text-muted-foreground">Max 10 MB. Image overrides emoji.</span>
             </div>
           </div>
         </div>
@@ -254,7 +254,7 @@ export function BlogForm({
               {v.author_photo_url && (
                 <button type="button" onClick={() => up("author_photo_url", "")} className="text-xs text-destructive hover:underline">Remove</button>
               )}
-              <span className="text-xs text-muted-foreground">Max 2 MB.</span>
+              <span className="text-xs text-muted-foreground">Max 10 MB.</span>
             </div>
             {isAdmin && users.length > 0 && (
               <Field label="Assign article to user (admin)">
